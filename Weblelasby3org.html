@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kelas 8.1 | by haev</title>
+
+  <style>
+    :root{
+      --bg1:#0f3d2e;
+      --bg2:#081f17;
+      --card: rgba(255,255,255,.08);
+      --card2: rgba(255,255,255,.13);
+      --text:#eafff2;
+      --muted: rgba(234,255,242,.75);
+      --stroke: rgba(170,255,210,.18);
+    }
+
+    *{box-sizing:border-box;font-family:system-ui,-apple-system,Segoe UI,Roboto}
+    body{
+      margin:0;min-height:100vh;color:var(--text);
+      background:linear-gradient(180deg,var(--bg1) 0%, var(--bg2) 60%, #0b1026 100%);
+    }
+
+    .app{max-width:520px;margin:0 auto;min-height:100vh;padding:18px 14px 86px}
+
+    /* HEADER */
+    .header{
+      padding:16px 14px;
+      border-radius:18px;
+      border:1px solid var(--stroke);
+      background:linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,.06));
+      transition: transform .25s ease, opacity .25s ease;
+
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      text-align:center;
+    }
+
+    .header.bump{transform: translateY(-2px); opacity:.98;}
+    .header h1{margin:0;font-size:26px;letter-spacing:.4px}
+    .header p{margin:8px 0 0;color:var(--muted);line-height:1.45}
+
+    .logo{
+      width:72px;
+      height:72px;
+      object-fit:cover;
+      border-radius:18px;
+      border:1px solid var(--stroke);
+      background:rgba(0,0,0,.2);
+      margin-bottom:12px;
+    }
+
+    .card{
+      background:var(--card);
+      border:1px solid var(--stroke);
+      border-radius:18px;
+      padding:14px;
+    }
+    .card + .card{margin-top:12px}
+
+    .titleRow{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+    .badge{font-size:12px;color:var(--muted)}
+
+    .list{display:grid;gap:10px;margin-top:10px}
+    .item{
+      background:rgba(255,255,255,.08);
+      border:1px solid var(--stroke);
+      border-radius:16px;
+      padding:12px;
+    }
+    .item b{display:block;margin-bottom:4px}
+
+    /* ===== Jadwal ===== */
+    .tableWrap{
+      overflow:auto;
+      border-radius:14px;
+      border:1px solid var(--stroke);
+      margin-top:10px
+    }
+    .jadwalTable{
+      min-width:980px;
+      margin:0;
+      border-collapse:collapse;
+      width:100%
+    }
+    .jadwalTable th,.jadwalTable td{
+      border-bottom:1px solid var(--stroke);
+      padding:10px 8px;
+      text-align:left;
+      vertical-align:top;
+    }
+    .jadwalTable th{
+      position:sticky;top:0;
+      background:rgba(20,20,45,.95);
+      color:var(--muted);
+      font-weight:900;
+      font-size:13px;
+    }
+    .jamCell{white-space:nowrap;color:var(--muted);font-size:12px}
+    .breakRow td{background:rgba(255,255,255,.08);font-weight:900}
+    .badgeSmall{
+      display:inline-block;
+      padding:4px 8px;
+      border:1px solid var(--stroke);
+      border-radius:999px;
+      font-size:12px;
+      color:var(--muted);
+      margin-left:8px;
+    }
+
+    /* ===== Album ===== */
+    .albumGrid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+      margin-top:10px;
+    }
+
+    .albumGrid img{
+      width:100%;
+      aspect-ratio:16/9; /* LANDSCAPE */
+      height:auto;
+      object-fit:cover;
+      border-radius:16px;
+      border:1px solid var(--stroke);
+      background:rgba(0,0,0,.15);
+    }
+
+    video{
+      width:100%;
+      aspect-ratio:16/9;
+      height:auto;
+      border-radius:16px;
+      border:1px solid var(--stroke);
+      background:rgba(0,0,0,.25);
+      margin-top:10px;
+    }
+
+    /* Bottom Nav */
+    .bottomNav{
+      position:fixed;
+      left:50%;
+      transform:translateX(-50%);
+      bottom:12px;
+      width:min(520px, calc(100% - 24px));
+      background:rgba(20,20,45,.78);
+      backdrop-filter:blur(10px);
+      border:1px solid var(--stroke);
+      border-radius:18px;
+      display:flex;
+      gap:10px;
+      padding:10px;
+    }
+    .navBtn{
+      flex:1;
+      border:1px solid transparent;
+      background:transparent;
+      color:var(--muted);
+      padding:10px;
+      border-radius:14px;
+      font-weight:900;
+      cursor:pointer;
+    }
+    .navBtn.active{
+      background:rgba(255,255,255,.10);
+      border-color:var(--stroke);
+      color:var(--text);
+    }
+
+    /* ===== Animasi pindah halaman ===== */
+    .page{
+      display:none;
+      margin-top:14px;
+      opacity:0;
+      transform: translateY(10px);
+      transition: opacity .25s ease, transform .25s ease;
+    }
+    .page.active{display:block;}
+    .page.show{
+      opacity:1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+
+<body>
+  <main class="app">
+
+    <header class="header" id="topHeader">
+      <img class="logo" src="https://files.catbox.moe/idans4.jpg" alt="logo kelas 8.1" />
+      <h1 id="pageTitle">KELAS 8.1</h1>
+      <p id="pageSub">Website kelas 8.1 • SMP PGRI Suryakencana</p>
+    </header>
+
+    <!-- TENTANG -->
+    <section class="page active show" id="tentang">
+      <div class="card">
+        <div class="titleRow">
+          <h2 style="margin:0;font-size:18px;">Tentang Kelas Kami</h2>
+          <span class="badge">8.1</span>
+        </div>
+
+        <p style="margin:10px 0 0;line-height:1.6;color:rgba(245,245,255,.92)">
+          Kelas 8.1 adalah salah satu kelas unggulan di SMP PGRI Suryakencana.
+          Kami belajar kompak, saling support, dan aktif dalam kegiatan sekolah.
+        </p>
+
+        <p style="margin:10px 0 0;line-height:1.6;color:rgba(245,245,255,.92)">
+          SMP PGRI Suryakencana berdiri sejak tahun 1964, sehingga sudah lebih dari enam dekade
+          berkontribusi dalam pendidikan.
+        </p>
+      </div>
+    </section>
+
+    <!-- STRUKTUR -->
+    <section class="page" id="struktur">
+      <div class="card">
+        <div class="titleRow">
+          <h2 style="margin:0;font-size:18px;">Struktur Class</h2>
+          <span class="badge">2025/2026</span>
+        </div>
+
+        <div class="list">
+          <div class="item"><b>Wali Kelas</b> Bu Rini</div>
+          <div class="item"><b>Ketua Kelas</b> Kanabiel Antal</div>
+          <div class="item"><b>Wakil Ketua</b> M. Raihan</div>
+          <div class="item"><b>Sekretaris</b> Nafeza, Najwa</div>
+          <div class="item"><b>Bendahara</b> Sevti, Nabila</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- JADWAL -->
+    <section class="page" id="jadwal">
+      <div class="card">
+        <div class="titleRow">
+          <h2 style="margin:0;font-size:18px;">Jadwal Mata Pelajaran</h2>
+          <span class="badge">Kelas 8.1</span>
+        </div>
+
+        <div class="tableWrap">
+          <table class="jadwalTable">
+            <thead>
+              <tr>
+                <th>Jam</th>
+                <th>Waktu</th>
+                <th>Senin</th>
+                <th>Selasa</th>
+                <th>Rabu</th>
+                <th>Waktu</th>
+                <th>Kamis</th>
+                <th>Waktu</th>
+                <th>Jumat</th>
+              </tr>
+            </thead>
+            <tbody id="jadwalBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ALBUM -->
+    <section class="page" id="album">
+      <div class="card">
+        <div class="titleRow">
+          <h2 style="margin:0;font-size:18px;">Album Kelas</h2>
+          <span class="badge">Foto & Video</span>
+        </div>
+
+        <div class="albumGrid">
+          <img src="https://r2.image-upload.app/uploads/temporary/1770549390378-j95dt8g32ni.jpg" alt="fotbar sekelas">
+          <img src="https://files.catbox.moe/279uhg.jpg" alt="fotbar sekelas">
+          <img src="https://files.catbox.moe/dv419y.jpg" alt="fotbar sekelas">
+          <img src="https://files.catbox.moe/q1co8p.jpg" alt="fotbar sekelas">
+        </div>
+
+        <video controls preload="metadata">
+          <source src="https://files.catbox.moe/oehu9z.mp4" type="video/mp4">
+         
+        </video>
+      </div>
+    </section>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottomNav">
+      <button class="navBtn active" data-page="tentang">Tentang</button>
+      <button class="navBtn" data-page="struktur">Struktur</button>
+      <button class="navBtn" data-page="jadwal">Jadwal</button>
+      <button class="navBtn" data-page="album">Album</button>
+    </nav>
+
+  </main>
+
+  <script>
+    const tabs = document.querySelectorAll(".navBtn");
+
+    const titleMap = {
+      tentang:  ["KELAS 8.1", "Website kelas 8.1 • SMP PGRI Suryakencana"],
+      struktur: ["STRUKTUR CLASS", "Susunan pengurus kelas 8.1"],
+      jadwal:   ["JADWAL MAPEL", "Tahun pelajaran 2025/2026"],
+      album:    ["ALBUM KELAS", "Foto & video kegiatan kelas"],
+    };
+
+    function bumpHeader(){
+      const header = document.getElementById("topHeader");
+      header.classList.add("bump");
+      setTimeout(() => header.classList.remove("bump"), 220);
+    }
+
+    function showPage(id){
+      const current = document.querySelector(".page.active");
+      const next = document.getElementById(id);
+
+      tabs.forEach(t => t.classList.toggle("active", t.dataset.page === id));
+
+      const [t, s] = titleMap[id] || ["", ""];
+      document.getElementById("pageTitle").textContent = t;
+      document.getElementById("pageSub").textContent = s;
+
+      bumpHeader();
+
+      if (current === next) return;
+
+      if (current){
+        current.classList.remove("show");
+
+        setTimeout(() => {
+          current.classList.remove("active");
+          next.classList.add("active");
+
+          requestAnimationFrame(() => {
+            window.scrollTo({ top: 0, behavior: "smooth" });
+            next.classList.add("show");
+          });
+        }, 250);
+      } else {
+        next.classList.add("active");
+        requestAnimationFrame(() => next.classList.add("show"));
+      }
+    }
+
+    tabs.forEach(t => t.addEventListener("click", () => showPage(t.dataset.page)));
+
+    // ===== Jadwal pelajaran =====
+    const jadwalMapel = [
+      { jam: 0, w1:"06.30-07.00", senin:"UPACARA",      selasa:"PEMBIASAAN", rabu:"PEMBIASAAN", w4:"06.30-07.00", kamis:"PEMBIASAAN", w5:"-",           jumat:"-" },
+      { jam: 1, w1:"07.00-07.40", senin:"-",           selasa:"INFORMATIKA", rabu:"PAI",        w4:"07.00-07.40", kamis:"SENI BUDAYA", w5:"07.00-07.30", jumat:"PEMBIASAAN" },
+      { jam: 2, w1:"07.40-08.20", senin:"MATEMATIKA",  selasa:"INFORMATIKA", rabu:"PAI",        w4:"07.40-08.20", kamis:"SENI BUDAYA", w5:"07.30-08.00", jumat:"-" },
+      { jam: 3, w1:"08.20-09.00", senin:"MATEMATIKA",  selasa:"INFORMATIKA", rabu:"PAI",        w4:"08.20-09.00", kamis:"SENI BUDAYA", w5:"08.00-08.40", jumat:"B. INDONESIA" },
+      { jam: 4, w1:"09.00-09.40", senin:"B. SUNDA",    selasa:"IPA",         rabu:"PJOK",       w4:"09.00-09.40", kamis:"B. INDONESIA", w5:"08.40-09.20", jumat:"B. INDONESIA" },
+
+      { break:true, label:"ISTIRAHAT 1", w1:"09.40-10.00" },
+
+      { jam: 5, w1:"10.00-10.40", senin:"B. SUNDA",    selasa:"IPA",         rabu:"PJOK",       w4:"10.00-10.40", kamis:"B. INDONESIA", w5:"09.50-10.30", jumat:"PKN" },
+      { jam: 6, w1:"10.40-11.20", senin:"IPS",         selasa:"B. INGGRIS",  rabu:"PJOK",       w4:"10.40-11.20", kamis:"B. INDONESIA", w5:"10.30-11.10", jumat:"PKN" },
+      { jam: 7, w1:"11.20-12.00", senin:"IPS",         selasa:"B. INGGRIS",  rabu:"PKN",        w4:"11.20-12.00", kamis:"B. INDONESIA", w5:"-", jumat:"-" },
+
+      { break:true, label:"ISTIRAHAT 2", w1:"12.00-12.40" },
+
+      { jam: 8, w1:"12.40-13.20", senin:"B. INGGRIS",  selasa:"MATEMATIKA",  rabu:"IPA",        w4:"12.40-13.20", kamis:"IPS",          w5:"-", jumat:"-" },
+      { jam: 9, w1:"13.20-14.00", senin:"B. INGGRIS",  selasa:"MATEMATIKA",  rabu:"IPA",        w4:"13.20-14.00", kamis:"IPS",          w5:"-", jumat:"-" },
+      { jam: 10, w1:"14.00-14.40", senin:"BTQ",        selasa:"MATEMATIKA",  rabu:"IPA",        w4:"-", kamis:"-", w5:"-", jumat:"-" },
+    ];
+
+    const tbody = document.getElementById("jadwalBody");
+    tbody.innerHTML = jadwalMapel.map(row => {
+      if (row.break) {
+        return `
+          <tr class="breakRow">
+            <td colspan="9">${row.label}<span class="badgeSmall">${row.w1 || ""}</span></td>
+          </tr>
+        `;
+      }
+      return `
+        <tr>
+          <td class="jamCell">${row.jam}</td>
+          <td class="jamCell">${row.w1 || "-"}</td>
+          <td>${row.senin || "-"}</td>
+          <td>${row.selasa || "-"}</td>
+          <td>${row.rabu || "-"}</td>
+          <td class="jamCell">${row.w4 || "-"}</td>
+          <td>${row.kamis || "-"}</td>
+          <td class="jamCell">${row.w5 || "-"}</td>
+          <td>${row.jumat || "-"}</td>
+        </tr>
+      `;
+    }).join("");
+
+    // start
+    showPage("tentang");
+  </script>
+
+</body>
+</html>
